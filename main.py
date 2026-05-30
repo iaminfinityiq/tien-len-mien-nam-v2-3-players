@@ -150,7 +150,7 @@ class Player:
             if old_owner is None:
                 return f"{self.name}, you have earned {other.name}"
             
-            return f"{other.tower_owner.name}, you have lost {other.name}\n{self.name}, you have earned {other.name}"
+            return f"{old_owner.name}, you have lost {other.name}\n{self.name}, you have earned {other.name}"
     
     def poisoned(self, poison_damage: int) -> None:
         self.poisoned_damage += poison_damage
@@ -288,7 +288,10 @@ class Game:
                 self.players[i] = None
         
         for i, player in enumerate(self.players):
-            if player is not None and player.dead():
+            if player is None:
+                continue
+            
+            if player.dead():
                 player.death_time -= 1
                 if player.death_time == 0:
                     player.respawn()
@@ -336,6 +339,9 @@ class Game:
             petc()
         
         for player in self.players:
+            if player is None:
+                continue
+            
             if player.dead():
                 continue
             
@@ -395,6 +401,9 @@ Currently, you can perform the following actions:""")
                     break
             
             for other in self.players:
+                if other is None:
+                    continue
+
                 if other.in_home_tower >= 10 and other is not player and not other.dead():
                     options += [Option(self, f"Elon Musk button ({other.name} has stayed in their towers for {other.in_home_tower} consecutive turns)", elon_musk_button, other.at)]
 
@@ -673,6 +682,10 @@ try:
         game.before_turn()
         game.perform_turn()
 except KeyboardInterrupt:
+    copy(encode_game(game))
+    print("Your code has been saved to the clipboard!")
+    exit(0)
+finally:
     copy(encode_game(game))
     print("Your code has been saved to the clipboard!")
     exit(0)
