@@ -426,7 +426,7 @@ Currently, you can perform the following actions:""")
                 
                 break
             except Exception as e:
-                print("Invalid number!", e)
+                print("Invalid number!")
                 petc()
                 continue
         
